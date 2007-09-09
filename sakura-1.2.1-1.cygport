@@ -1,0 +1,29 @@
+DESCRIPTION="GTK+ terminal emulator"
+HOMEPAGE="http://pleyades.net/david/sakura.php"
+SRC_URI="http://pleyades.net/david/projects/${PN}/${P}.tar.bz2"
+
+DIFF_EXCLUDES="po"
+
+src_compile() {
+	lndirs
+	cd ${B}
+	./0 --prefix=/usr || error "configure failed"
+	cygmake
+}
+
+src_install() {
+	local lang
+
+	cd ${B}
+	dobin src/sakura.exe
+	doicon terminal-tango.png
+
+	for mo in po/*.mo
+	do
+		lang=${mo##*/}
+		lang=${mo%.mo}
+
+		insinto /usr/share/locale/${lang}/LC_MESSAGES
+		newins ${mo} ${PN}.mo
+	done
+}
